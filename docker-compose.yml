@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: express
+      POSTGRES_PASSWORD: express
+      POSTGRES_DB: express
+    ports:
+      - "5432:5432"
+    deploy:
+      resources:
+        limits:
+          memory: "512M"
+          cpus: "1"
+  todo-express:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - postgres
+    environment:
+      SERVERHOST: "0.0.0.0"
+      SERVERPORT: 8080
+      PGUSER: express
+      PGPASSWORD: express
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDBNAME: express
+      PGPOOLMAX_SIZE: 30
+    deploy:
+      resources:
+        limits:
+          memory: "512M"
+          cpus: "1"
+    ports:
+      - "8080:8080"
